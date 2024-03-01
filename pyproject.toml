@@ -1,0 +1,25 @@
+[project]
+name = "disney"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "naoto120424", email = "naoto-naka@hiroshima-u.ac.jp"},
+]
+dependencies = [
+    "tqdm>=4.66.2",
+    "jpholiday>=0.1.8",
+    "pandas>=2.2.1",
+    "requests>=2.31.0",
+    "bs4>=0.0.2",
+]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
