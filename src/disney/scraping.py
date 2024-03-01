@@ -12,8 +12,14 @@ import time
 from dateutil.relativedelta import relativedelta
 from tqdm import tqdm
 import os
+import jpholiday
 
-# import jpholiday
+
+def isBizDay(date):
+    if date.weekday() >= 5 or jpholiday.is_holiday(date):
+        return 1
+    else:
+        return 0
 
 
 # カラム名の定義をする関数
@@ -116,24 +122,23 @@ def get_csv(year, month):
 
     # 月曜日 → 0、日曜日 → 6
     df_dis["曜日_数値"] = df_dis["時間"].dt.weekday
-    df_dis["曜日"] = df_dis["時間"].dt.day_name()
-
-    # 休日判定
-    # df['休日'] = df.時間.map(jpholiday.is_holiday)
 
     # 運休 / 案内終了は0分とする
     for df_col in df_dis.columns:
-        if (df_col != "時間") and (df_col != "曜日"):
+        if df_col != "時間":
             df_dis.loc[((df_dis[df_col] == "案内終了") | (df_dis[df_col] == "－") | (df_dis[df_col] == "一時運休") | (df_dis[df_col] == "計画運休") | (df_dis[df_col] == "")), [df_col]] = 0
             df_dis[df_col] = df_dis[df_col].astype("int")
 
+    # 休日判定
+    df_dis["休日"] = df_dis["時間"].map(isBizDay)
+
     os.makedirs("data", exist_ok=True)
-    df_dis.to_csv(os.path.join("data", f'{datetime.datetime.strftime(start_day, "%Y%m")}_DisneySea.csv'))
+    df_dis.to_csv(os.path.join("/Users/naotonaka/Library/CloudStorage/OneDrive-HiroshimaUniversity/code/disney/data", f'{datetime.datetime.strftime(start_day, "%Y%m")}_DisneySea.csv'))
 
 
 def main():
     start_year, start_month = 2020, 12
-    end_year, end_month = 2024, 1
+    end_year, end_month = 2024, 2
 
     start_day = datetime.datetime(start_year, start_month, 1)
 
